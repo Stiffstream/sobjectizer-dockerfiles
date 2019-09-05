@@ -3,18 +3,18 @@ FROM ubuntu:18.04
 # Prepare build environment
 RUN apt-get update && \
     apt-get -qq -y install gcc g++ \
-	 mercurial
+	 git
 
 RUN apt-get -qq -y install ruby \
 	&& gem install Mxx_ru
 
-ARG hgrev=tip
+ARG hgrev=HEAD
 
 RUN echo "*** Downloading SObjectizer ***" \
 	&& cd /tmp \
-	&& hg clone https://bitbucket.com/sobjectizerteam/sobjectizer \
+	&& git clone https://github.com/stiffstream/sobjectizer \
 	&& cd sobjectizer \
-	&& hg up -r $hgrev
+	&& git checkout $hgrev
 
 RUN echo "*** Building SObjectizer ***" \
 	&& cd /tmp/sobjectizer/dev \
