@@ -1,4 +1,4 @@
-FROM archlinux/base:latest
+FROM archlinux:latest
 
 # Prepare build environment
 RUN pacman -Sy --noconfirm clang \
@@ -9,7 +9,10 @@ RUN pacman -Sy --noconfirm clang \
 
 RUN pacman -Sy --noconfirm libffi
 
-RUN gem install Mxx_ru
+RUN \
+	export GEM_HOME="$(ruby -e 'puts Gem.user_dir')" \
+	&& export PATH="$PATH:$GEM_HOME/bin" \
+	&& gem install Mxx_ru
 
 ARG hgrev=HEAD
 
@@ -20,7 +23,8 @@ RUN echo "*** Downloading SObjectizer ***" \
 	&& git checkout $hgrev
 
 RUN echo "*** Building SObjectizer ***" \
-	&& export PATH=${PATH}:~/.gem/ruby/2.7.0/bin \
+	&& export GEM_HOME="$(ruby -e 'puts Gem.user_dir')" \
+	&& export PATH="$PATH:$GEM_HOME/bin" \
 	&& cd /tmp/sobjectizer/dev \
 	&& cp local-build.rb.example local-build.rb \
 	&& MXX_RU_CPP_TOOLSET=clang_linux ruby build_all.rb --mxx-cpp-release
